@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     frontend_url: str = "http://localhost:3000"
+    auto_init_db: bool = True
+    fail_on_startup_db_error: bool = False
 
     database_url: str = Field(default="postgresql+asyncpg://postgres:postgres@localhost:5432/postgres")
 

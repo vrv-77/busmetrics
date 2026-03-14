@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,11 +10,18 @@ from app.core.config import get_settings
 from app.db.init_db import init_db
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
+    if settings.auto_init_db:
+        try:
+            await init_db()
+        except Exception as exc:
+            if settings.fail_on_startup_db_error:
+                raise
+            logger.exception("Database initialization failed on startup: %s", exc)
     yield
 
 
