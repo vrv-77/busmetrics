@@ -1,0 +1,10 @@
+[project]
+name = "busmetric-backend"
+version = "0.1.0"
+description = "Operational charging analytics backend for electric bus depots"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["app"]
+testpaths = ["tests"]
