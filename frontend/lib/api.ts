@@ -29,12 +29,12 @@ function buildQuery(filters?: QueryFilters): string {
 
 function authHeaders() {
   if (typeof window === "undefined") {
-    return {}
+    return {} as Record<string, string>
   }
 
   const token = localStorage.getItem("busmetric-access-token")
   if (!token) {
-    return {}
+    return {} as Record<string, string>
   }
 
   return {
@@ -43,13 +43,13 @@ function authHeaders() {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers)
+  headers.set("Content-Type", "application/json")
+  Object.entries(authHeaders()).forEach(([key, value]) => headers.set(key, value))
+
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders(),
-      ...(init?.headers ?? {}),
-    },
+    headers,
     cache: "no-store",
   })
 

@@ -6,7 +6,7 @@ export function SimpleTable({
   emptyText = "Sin datos",
 }: {
   columns: Array<{ key: string; label: string }>
-  rows: Array<Record<string, unknown>>
+  rows: object[]
   emptyText?: string
 }) {
   return (
@@ -29,7 +29,7 @@ export function SimpleTable({
           rows.map((row, idx) => (
             <TableRow key={idx}>
               {columns.map((col) => (
-                <TableCell key={col.key}>{String(row[col.key] ?? "-")}</TableCell>
+                <TableCell key={col.key}>{String((row as Record<string, unknown>)[col.key] ?? "-")}</TableCell>
               ))}
             </TableRow>
           ))
