@@ -1,18 +1,20 @@
-# Deployment Guide
+﻿# Deployment Guide
 
 ## 1) Supabase
 
-1. Crea un proyecto Supabase
-2. Ejecuta `supabase/schema.sql` en SQL Editor
-3. Crea bucket `charging-files`
-4. Copia:
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in SQL Editor.
+3. Create bucket `charging-files`.
+4. Copy:
    - Project URL
    - anon key
    - service_role key
-5. Configura RLS según políticas corporativas
+5. Configure RLS according to your security model.
 
 ## 2) Backend (Render)
 
+- Service type: Web Service
+- Runtime: Python (not Docker)
 - Root Directory: `backend`
 - Build Command:
 
@@ -27,10 +29,11 @@ python run.py
 ```
 
 - Environment Variables:
+  - `PYTHON_VERSION=3.11.9`
   - `APP_ENV=production`
   - `APP_HOST=0.0.0.0`
-  - `APP_PORT=10000` (o puerto de Render)
-  - `FRONTEND_URL=https://<tu-frontend>.vercel.app`
+  - `APP_PORT=10000` (or Render port)
+  - `FRONTEND_URL=https://<your-frontend>.vercel.app`
   - `DATABASE_URL=postgresql+asyncpg://...`
   - `SUPABASE_URL=...`
   - `SUPABASE_ANON_KEY=...`
@@ -45,23 +48,23 @@ python run.py
 - Build command: `npm run build`
 
 Environment variables:
-- `NEXT_PUBLIC_API_URL=https://<tu-backend>.onrender.com`
+- `NEXT_PUBLIC_API_URL=https://<your-backend>.onrender.com`
 - `NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>`
 
 ## 4) Post deploy checks
 
-1. `GET /health` responde `ok`
-2. Login funciona con Supabase Auth
-3. Subida de Excel guarda archivo y metadata
-4. Procesamiento inserta sesiones y alertas
-5. Dashboard carga KPIs y gráficos
-6. Exportaciones (`csv`, `excel`, `pdf`) descargan correctamente
+1. `GET /health` returns `ok`
+2. Login works with Supabase Auth
+3. Excel upload stores file and metadata
+4. Processing inserts sessions and alerts
+5. Dashboard loads KPIs and charts
+6. Exports (`csv`, `excel`, `pdf`) download correctly
 
-## 5) Escalabilidad y hardening recomendado
+## 5) Recommended hardening
 
-- Añadir worker asíncrono (Celery/RQ) para archivos grandes
-- Cachear consultas de dashboard (Redis)
-- Agregar migraciones versionadas (Alembic)
-- Implementar tracing (OpenTelemetry)
-- Completar políticas RLS por tenant/usuario
+- Add async worker (Celery/RQ) for heavy files
+- Cache dashboard queries (Redis)
+- Add versioned migrations (Alembic)
+- Add tracing/monitoring
+- Complete tenant/user RLS policies
