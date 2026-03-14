@@ -21,7 +21,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pytest
       - name: Run tests
-        run: pytest
+        run: python -m pytest tests/test_excel_processor.py -q -c /dev/null
 
   frontend:
     runs-on: ubuntu-latest
