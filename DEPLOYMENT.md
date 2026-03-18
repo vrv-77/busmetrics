@@ -74,7 +74,18 @@ If you open the backend URL directly, this response is expected:
 
 That URL is the API service, not the web UI. Open the Static Site URL to see the dashboard.
 
-## 5) Post deploy checks
+## 5) Common CORS issue in Render
+
+If browser console shows:
+- `Redirect is not allowed for a preflight request`
+- `Disallowed CORS origin`
+
+Check both:
+1. `NEXT_PUBLIC_API_URL` must use `.onrender.com` (not `.onrender.co`).
+2. Backend `FRONTEND_URL` must match your static site origin exactly, for example:
+   - `https://busmetrics-1.onrender.com`
+
+## 6) Post deploy checks
 
 1. `GET /health` returns `ok`
 2. Login works with Supabase Auth
@@ -83,7 +94,7 @@ That URL is the API service, not the web UI. Open the Static Site URL to see the
 5. Dashboard loads KPIs and charts
 6. Exports (`csv`, `excel`, `pdf`) download correctly
 
-## 6) Recommended hardening
+## 7) Recommended hardening
 
 - Add async worker (Celery/RQ) for heavy files
 - Cache dashboard queries (Redis)

@@ -13,6 +13,12 @@ settings = get_settings()
 logger = logging.getLogger(__name__)
 
 
+def _normalize_origin(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.strip().rstrip("/")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if settings.auto_init_db:
@@ -32,9 +38,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+allow_origins = {
+    _normalize_origin(settings.frontend_url),
+    "http://localhost:3000",
+    "https://localhost:3000",
+}
+
+if settings.cors_extra_origins:
+    for origin in settings.cors_extra_origins.split(","):
+        normalized = _normalize_origin(origin)
+        if normalized:
+            allow_origins.add(normalized)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://localhost:3000", "https://localhost:3000"],
+    allow_origins=sorted(allow_origins),
+    allow_origin_regex=settings.cors_allow_origin_regex or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

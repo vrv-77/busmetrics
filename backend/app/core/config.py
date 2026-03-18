@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     frontend_url: str = "http://localhost:3000"
+    cors_allow_origin_regex: str = r"^https://.*\.onrender\.com$"
+    cors_extra_origins: str = ""
     auto_init_db: bool = True
     fail_on_startup_db_error: bool = False
 
