@@ -167,3 +167,21 @@ Pipeline en `.github/workflows/ci.yml`:
 - Logs de calidad de datos en `processing_logs`
 - Alertas operacionales normalizadas por severidad
 - Historial de archivos y estado de procesamiento
+
+## Inicio rapido en Windows
+
+Desde la raiz del proyecto:
+
+```bat
+scripts\start-local.cmd
+```
+
+Esto abre dos consolas:
+- Backend en `http://localhost:8000`
+- Frontend en `http://localhost:3000`
+
+Para detener ambos:
+
+```bat
+scripts\stop-local.cmd
+```
