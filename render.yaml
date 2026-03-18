@@ -35,8 +35,9 @@ services:
       - key: AUTH_REQUIRED
         value: "true"
 
-  - type: static
+  - type: web
     name: busmetrics-web
+    env: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: out
