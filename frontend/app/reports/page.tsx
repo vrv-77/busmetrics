@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select } from "@/components/ui/select"
+import { getErrorMessage } from "@/lib/errors"
 import { useExportReport } from "@/lib/hooks"
 import { useFiltersStore } from "@/store/useFiltersStore"
 import { useState } from "react"
@@ -73,7 +74,7 @@ export default function ReportsPage() {
             </Button>
           </div>
 
-          {exportMutation.isError ? <p className="text-sm text-rose-300">Error: {exportMutation.error.message}</p> : null}
+          {exportMutation.isError ? <p className="text-sm text-rose-300">Error: {getErrorMessage(exportMutation.error)}</p> : null}
         </CardContent>
       </Card>
     </div>

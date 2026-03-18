@@ -5,6 +5,7 @@ import { SeverityBadge } from "@/components/dashboard/severity-badge"
 import { PageHeader } from "@/components/layout/page-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getErrorMessage } from "@/lib/errors"
 import { useAlerts } from "@/lib/hooks"
 import { useFiltersStore } from "@/store/useFiltersStore"
 
@@ -31,7 +32,7 @@ export default function AlertsPage() {
           {alertsQuery.isLoading ? (
             <p className="text-sm text-muted-foreground">Cargando alertas...</p>
           ) : alertsQuery.isError ? (
-            <p className="text-sm text-rose-300">Error: {alertsQuery.error.message}</p>
+            <p className="text-sm text-rose-300">Error: {getErrorMessage(alertsQuery.error)}</p>
           ) : (
             <Table>
               <TableHeader>

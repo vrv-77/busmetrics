@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getErrorMessage } from "@/lib/errors"
 import { useFiles, useProcessFile } from "@/lib/hooks"
 
 function statusVariant(status: string): "success" | "warning" | "critical" | "neutral" {
@@ -35,7 +36,7 @@ export default function FilesPage() {
           {filesQuery.isLoading ? (
             <p className="text-sm text-muted-foreground">Cargando archivos...</p>
           ) : filesQuery.isError ? (
-            <p className="text-sm text-rose-300">Error: {filesQuery.error.message}</p>
+            <p className="text-sm text-rose-300">Error: {getErrorMessage(filesQuery.error)}</p>
           ) : (
             <Table>
               <TableHeader>

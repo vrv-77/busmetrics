@@ -6,6 +6,7 @@ import { Loader2, UploadCloud } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { getErrorMessage } from "@/lib/errors"
 import { useProcessFile, useUploadExcel } from "@/lib/hooks"
 
 export function FileUploadCard() {
@@ -47,8 +48,8 @@ export function FileUploadCard() {
           </Button>
         </div>
 
-        {uploadMutation.isError ? <p className="text-sm text-rose-300">Error de carga: {uploadMutation.error.message}</p> : null}
-        {processMutation.isError ? <p className="text-sm text-rose-300">Error de procesamiento: {processMutation.error.message}</p> : null}
+        {uploadMutation.isError ? <p className="text-sm text-rose-300">Error de carga: {getErrorMessage(uploadMutation.error)}</p> : null}
+        {processMutation.isError ? <p className="text-sm text-rose-300">Error de procesamiento: {getErrorMessage(processMutation.error)}</p> : null}
 
         {uploadedFileId ? <p className="text-xs text-muted-foreground">Archivo subido: {uploadedFileId}</p> : null}
       </CardContent>
