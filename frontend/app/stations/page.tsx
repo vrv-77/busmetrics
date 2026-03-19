@@ -6,36 +6,44 @@ import { FiltersPanel } from "@/components/dashboard/filters-panel"
 import { SimpleTable } from "@/components/dashboard/simple-table"
 import { PageHeader } from "@/components/layout/page-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useStations } from "@/lib/hooks"
 import { useFiltersStore } from "@/store/useFiltersStore"
+import { useTerminals } from "@/lib/hooks"
 
 export default function StationsPage() {
   const filters = useFiltersStore((state) => ({
     file_id: state.file_id,
-    estacion: state.estacion,
+    terminal: state.terminal,
+    turno: state.turno,
+    patente: state.patente,
+    numero_interno: state.numero_interno,
+    conductor: state.conductor,
+    supervisor: state.supervisor,
+    planillero: state.planillero,
+    surtidor: state.surtidor,
+    search: state.search,
     date_from: state.date_from,
     date_to: state.date_to,
   }))
 
-  const stationsQuery = useStations(filters)
+  const terminalsQuery = useTerminals(filters)
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Estaciones" subtitle="Métricas operacionales agregadas por electrolinera" />
+      <PageHeader title="Analisis por Terminal" subtitle="Consumo, actividad y comparacion entre terminales" />
       <FiltersPanel />
 
       <Card>
         <CardHeader>
-          <CardTitle>Energía Total por Estación</CardTitle>
+          <CardTitle>Litros Totales por Terminal</CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer>
-            <BarChart data={stationsQuery.data ?? []}>
+            <BarChart data={terminalsQuery.data ?? []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#29425f" />
-              <XAxis dataKey="estacion" stroke="#97afc4" />
+              <XAxis dataKey="terminal" stroke="#97afc4" />
               <YAxis stroke="#97afc4" />
               <Tooltip />
-              <Bar dataKey="energia_total" fill="#20c997" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="litros_totales" fill="#20c997" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -43,21 +51,22 @@ export default function StationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Detalle por Estación</CardTitle>
+          <CardTitle>Detalle por Terminal</CardTitle>
         </CardHeader>
         <CardContent>
           <SimpleTable
             columns={[
-              { key: "estacion", label: "Estación" },
+              { key: "terminal", label: "Terminal" },
               { key: "total_cargas", label: "Cargas" },
-              { key: "energia_total", label: "Energía (kWh)" },
-              { key: "potencia_promedio", label: "Pot. Prom. (kW)" },
-              { key: "potencia_maxima", label: "Pot. Máx. (kW)" },
-              { key: "duracion_promedio", label: "Duración Prom. (min)" },
-              { key: "alertas_soc_bajo", label: "SOC Bajo" },
-              { key: "sesiones_incompletas", label: "Incompletas" },
+              { key: "litros_totales", label: "Litros" },
+              { key: "promedio_litros_por_carga", label: "Prom. litros/carga" },
+              { key: "buses_unicos", label: "Buses unicos" },
+              { key: "conductores_unicos", label: "Conductores unicos" },
+              { key: "surtidores_activos", label: "Surtidores" },
+              { key: "participacion_pct", label: "% participacion" },
+              { key: "caida_operacional", label: "Caida operacional" },
             ]}
-            rows={stationsQuery.data ?? []}
+            rows={terminalsQuery.data ?? []}
           />
         </CardContent>
       </Card>

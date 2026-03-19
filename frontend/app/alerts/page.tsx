@@ -12,7 +12,15 @@ import { useFiltersStore } from "@/store/useFiltersStore"
 export default function AlertsPage() {
   const filters = useFiltersStore((state) => ({
     file_id: state.file_id,
-    estacion: state.estacion,
+    terminal: state.terminal,
+    turno: state.turno,
+    patente: state.patente,
+    numero_interno: state.numero_interno,
+    conductor: state.conductor,
+    supervisor: state.supervisor,
+    planillero: state.planillero,
+    surtidor: state.surtidor,
+    search: state.search,
     date_from: state.date_from,
     date_to: state.date_to,
   }))
@@ -21,7 +29,7 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Alertas Operacionales" subtitle="Eventos críticos, advertencias e incompletos" />
+      <PageHeader title="Alertas Operacionales" subtitle="Eventos criticos, advertencias y anomalias de calidad" />
       <FiltersPanel />
 
       <Card>

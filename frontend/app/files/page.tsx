@@ -24,7 +24,10 @@ export default function FilesPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Gestión de Archivos" subtitle="Carga, procesamiento y trazabilidad de archivos Excel transaccionales" />
+      <PageHeader
+        title="Gestion de Archivos"
+        subtitle="Carga, validacion estructural, mapeo de columnas y reproceso de archivos de combustible"
+      />
 
       <FileUploadCard />
 
@@ -42,6 +45,7 @@ export default function FilesPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Archivo</TableHead>
+                  <TableHead>Formato</TableHead>
                   <TableHead>Fecha de carga</TableHead>
                   <TableHead>Usuario</TableHead>
                   <TableHead>Estado</TableHead>
@@ -53,6 +57,7 @@ export default function FilesPage() {
                 {(filesQuery.data ?? []).map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.filename}</TableCell>
+                    <TableCell>{item.detected_format ?? "-"}</TableCell>
                     <TableCell>{new Date(item.upload_date).toLocaleString()}</TableCell>
                     <TableCell>{item.user_id}</TableCell>
                     <TableCell>
@@ -63,7 +68,7 @@ export default function FilesPage() {
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => processMutation.mutate(item.id)}
+                        onClick={() => processMutation.mutate({ fileId: item.id })}
                         disabled={processMutation.isPending || item.status === "processing"}
                       >
                         {processMutation.isPending ? (

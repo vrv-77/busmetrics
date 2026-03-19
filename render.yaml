@@ -31,7 +31,7 @@ services:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: SUPABASE_STORAGE_BUCKET
-        value: charging-files
+        value: fuel-files
       - key: AUTH_REQUIRED
         value: "true"
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class AlertResponse(BaseModel):
     id: int
-    session_id: int | None
+    load_id: int | None
     file_id: str
     type: str
     severity: str

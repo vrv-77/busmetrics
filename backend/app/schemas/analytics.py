@@ -2,63 +2,35 @@ from pydantic import BaseModel
 
 
 class KPIMetrics(BaseModel):
-    total_sesiones: int
-    energia_total_kwh: float
-    potencia_promedio_kw: float
-    potencia_maxima_kw: float
-    duracion_promedio_min: float
-    buses_unicos: int
-    cargadores_activos: int
-    estaciones_activas: int
-    alertas_criticas: int
+    total_cargas: int
+    total_litros_cargados: float
+    litros_del_dia: float
+    litros_del_mes: float
+    litros_periodo_filtrado: float
+    buses_unicos_atendidos: int
+    terminales_activos: int
+    surtidores_activos: int
+    conductores_unicos: int
+    promedio_litros_por_carga: float
+    promedio_cargas_por_dia: float
+    variacion_porcentual_periodo_anterior: float
+    odometro_promedio: float
+    carga_promedio_por_terminal: float
+    carga_promedio_por_turno: float
 
 
 class DashboardResponse(BaseModel):
     kpis: KPIMetrics
-    cargas_por_estacion: list[dict]
-    energia_por_estacion: list[dict]
-    potencia_promedio_por_estacion: list[dict]
-    ranking_cargadores: list[dict]
-    ranking_buses: list[dict]
-    heatmap_horario: list[dict]
+    litros_por_dia: list[dict]
     cargas_por_dia: list[dict]
-    distribucion_soc_inicial: list[dict]
+    litros_por_terminal: list[dict]
+    cargas_por_terminal: list[dict]
+    turno_donut: list[dict]
+    terminal_donut: list[dict]
+    heatmap: list[dict]
+    top_buses_por_cargas: list[dict]
+    top_buses_por_litros: list[dict]
+    ranking_terminales_consumo: list[dict]
+    ranking_surtidores: list[dict]
+    ranking_conductores: list[dict]
     alertas: dict
-
-
-class StationMetric(BaseModel):
-    estacion: str
-    total_cargas: int
-    energia_total: float
-    potencia_promedio: float
-    potencia_maxima: float
-    duracion_promedio: float
-    total_horas_cargando: float
-    buses_atendidos: int
-    alertas_soc_bajo: int
-    sesiones_incompletas: int
-
-
-class ChargerMetric(BaseModel):
-    cargador: str
-    estacion: str | None
-    total_sesiones: int
-    energia_total: float
-    potencia_promedio: float
-    potencia_maxima: float
-    duracion_promedio: float
-    total_horas_operando: float
-    buses_atendidos: int
-    eficiencia_kwh_por_hora: float
-    utilizacion: float
-
-
-class BusMetric(BaseModel):
-    vehiculo: str
-    total_cargas: int
-    soc_inicial_promedio: float
-    soc_final_promedio: float
-    energia_total_recibida: float
-    duracion_promedio: float
-    frecuencia_carga_horas: float
-    cargas_criticas: int

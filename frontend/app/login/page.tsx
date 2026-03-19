@@ -34,7 +34,7 @@ export default function LoginPage() {
       }
 
       if (!data.session?.access_token) {
-        throw new Error("No se obtuvo token de sesión")
+        throw new Error("No se obtuvo token de sesion")
       }
 
       localStorage.setItem("busmetric-access-token", data.session.access_token)
@@ -48,17 +48,29 @@ export default function LoginPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Login" subtitle="Autenticación Supabase para acceso a la plataforma" />
+      <PageHeader title="Login" subtitle="Autenticacion Supabase para acceso a la plataforma FuelOps" />
 
       <Card className="mx-auto max-w-lg border-primary/30">
         <CardHeader>
-          <CardTitle>Ingresar a BusMetric Ops</CardTitle>
-          <CardDescription>Si no configuras Supabase en frontend, se usará modo local de desarrollo.</CardDescription>
+          <CardTitle>Ingresar a BusMetric FuelOps</CardTitle>
+          <CardDescription>Si no configuras Supabase en frontend, se usara modo local de desarrollo.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-3">
-            <Input type="email" placeholder="correo@empresa.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <Input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <Input
+              type="email"
+              placeholder="correo@empresa.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
             <Button type="submit" disabled={loading}>
               {loading ? "Ingresando..." : "Ingresar"}
             </Button>

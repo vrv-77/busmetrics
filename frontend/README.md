@@ -1,10 +1,10 @@
-# Frontend - BusMetric Ops
+# Frontend - BusMetric FuelOps
 
 ## Run
 
 ```bash
 npm install
-cp .env.local.example .env.local
+copy .env.local.example .env.local
 npm run dev
 ```
 
@@ -13,8 +13,12 @@ npm run dev
 - `/login`
 - `/`
 - `/files`
+- `/operations`
 - `/stations`
+- `/shifts`
 - `/chargers`
 - `/buses`
+- `/people`
+- `/quality`
 - `/alerts`
 - `/reports`

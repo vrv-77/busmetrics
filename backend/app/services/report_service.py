@@ -12,9 +12,13 @@ from app.services.analytics_service import (
     AnalyticsFilters,
     get_alerts,
     get_bus_metrics,
-    get_charger_metrics,
     get_dashboard_data,
-    get_station_metrics,
+    get_dispenser_metrics,
+    get_operations_table,
+    get_people_metrics,
+    get_quality_metrics,
+    get_shift_metrics,
+    get_terminal_metrics,
 )
 
 
@@ -33,18 +37,37 @@ async def build_report_bytes(
     if fmt == "pdf":
         return _to_pdf(scope, payload_df)
 
-    raise ValueError("Formato de exportación no soportado")
+    raise ValueError("Formato de exportacion no soportado")
 
 
 async def _build_scope_dataframe(db: AsyncSession, scope: str, filters: AnalyticsFilters) -> pd.DataFrame:
-    if scope == "stations":
-        return pd.DataFrame(await get_station_metrics(db, filters))
-    if scope == "chargers":
-        return pd.DataFrame(await get_charger_metrics(db, filters))
+    if scope == "terminals":
+        return pd.DataFrame(await get_terminal_metrics(db, filters))
+    if scope == "shifts":
+        return pd.DataFrame(await get_shift_metrics(db, filters))
+    if scope == "dispensers":
+        return pd.DataFrame(await get_dispenser_metrics(db, filters))
     if scope == "buses":
         return pd.DataFrame(await get_bus_metrics(db, filters))
     if scope == "alerts":
         return pd.DataFrame(await get_alerts(db, filters, limit=5000))
+    if scope == "quality":
+        quality = await get_quality_metrics(db, filters)
+        rows = [{"metrica": k, "valor": v} for k, v in quality.items() if not isinstance(v, list)]
+        return pd.DataFrame(rows)
+    if scope == "people":
+        people = await get_people_metrics(db, filters)
+        return pd.concat(
+            [
+                pd.DataFrame(people.get("conductores", [])).assign(categoria="conductores"),
+                pd.DataFrame(people.get("supervisores", [])).assign(categoria="supervisores"),
+                pd.DataFrame(people.get("planilleros", [])).assign(categoria="planilleros"),
+            ],
+            ignore_index=True,
+        )
+    if scope == "operations":
+        table = await get_operations_table(db, filters, page=1, page_size=5000)
+        return pd.DataFrame(table.get("rows", []))
     if scope == "dashboard":
         dashboard = await get_dashboard_data(db, filters)
         rows = [{"metrica": k, "valor": v} for k, v in dashboard["kpis"].items()]

@@ -1,54 +1,76 @@
-﻿from io import BytesIO
+from io import BytesIO
 
 import pandas as pd
 
-from app.services.excel_processor import process_excel
-
-
-REQUIRED_COLS = {
-    "ID": [1, 2],
-    "INICIO (UTC+00:00)": ["2026-01-01T12:00:00Z", "2026-01-01T13:00:00Z"],
-    "T\u00c9RMINO (UTC+00:00)": ["2026-01-01T12:45:00Z", None],
-    "ACTIVO": ["Electrolinera A", "Electrolinera A"],
-    "CARGADOR": ["C1", "C1"],
-    "CONECTOR": ["CCS2", "CCS2"],
-    "VEH\u00cdCULO": ["BUS-01", "BUS-02"],
-    "SOC INICIAL (%)": [15, 40],
-    "SOC FINAL (%)": [65, 80],
-    "SOH (%)": [98, 97],
-    "ENERGIA CARGADA (kWh)": [120, 85],
-    "POTENCIA PROMEDIO (kW)": [160, 140],
-    "POTENCIA M\u00c1XIMA (kW)": [220, 210],
-    "RFID DE INICIO": ["R1", "R2"],
-    "RFID DE T\u00c9RMINO": ["R1", "R2"],
-    "OD\u00d3METRO (km)": [120000, 121000],
-}
+from app.services.excel_processor import preview_excel, process_excel
 
 
 def build_excel_bytes() -> bytes:
-    df = pd.DataFrame(REQUIRED_COLS)
+    df = pd.DataFrame(
+        {
+            "Turno": ["A", "B"],
+            "Fecha": ["18-03-2026", "18-03-2026"],
+            "Hora": ["06:30", "13:15"],
+            "Terminal": ["Terminal Norte", "Terminal Norte"],
+            "Numero interno": ["B-101", "B-102"],
+            "Patente": ["ABCD12", "EFGH34"],
+            "Cantidad litros": [120, 95],
+            "Tipo": ["DIESEL", "DIESEL"],
+            "Tapa": ["OK", "OK"],
+            "Filtracion": ["NO", "NO"],
+            "Modelo chasis": ["Volvo", "Volvo"],
+            "Estanque": ["Principal", "Principal"],
+            "Llenado": ["Completo", "Parcial"],
+            "Exeso": ["0", "0"],
+            "Odometro": [120000, 120500],
+            "RUT planillero": ["12.345.678-5", "12.345.678-5"],
+            "Nombre planillero": ["Ana", "Ana"],
+            "RUT supervisor": ["11.111.111-1", "11.111.111-1"],
+            "Nombre supervisor": ["Carlos", "Carlos"],
+            "RUT conductor": ["22.222.222-2", "33.333.333-3"],
+            "Nombre conductor": ["Pedro", "Luis"],
+            "Surtidor": ["S1", "S2"],
+            "Capturador": ["CAP-01", "CAP-02"],
+            "Cargado por": ["OPERADOR", "OPERADOR"],
+        }
+    )
+
     buffer = BytesIO()
     with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, startrow=2)
     return buffer.getvalue()
 
 
-def test_excel_processor_generates_calculated_columns() -> None:
+def build_html_xls_bytes() -> bytes:
+    html = """
+    <html><body>
+      <table>
+        <tr><td>Turno</td><td>Fecha</td><td>Hora</td><td>Terminal</td><td>Numero interno</td><td>Patente</td><td>Cantidad litros</td><td>Surtidor</td></tr>
+        <tr><td>C</td><td>18-03-2026</td><td>21:10</td><td>Terminal Sur</td><td>B-200</td><td>IJKL56</td><td>140</td><td>S3</td></tr>
+      </table>
+    </body></html>
+    """
+    return html.encode("utf-8")
+
+
+def test_excel_processor_generates_derived_columns() -> None:
     payload = build_excel_bytes()
-    result = process_excel(payload)
+    result = process_excel(payload, "cargas.xlsx")
 
-    assert len(result.sessions_df) == 2
-    assert "duracion_min" in result.sessions_df.columns
-    assert "duracion_horas" in result.sessions_df.columns
-    assert "sesion_incompleta" in result.sessions_df.columns
-    assert result.sessions_df["sesion_incompleta"].tolist() == [False, True]
-    assert result.sessions_df["alerta_soc_bajo"].tolist() == [True, False]
+    assert len(result.processed_df) == 2
+    assert "datetime_carga" in result.processed_df.columns
+    assert "clave_unica_registro" in result.processed_df.columns
+    assert "alerta_consumo" in result.processed_df.columns
+    assert result.dashboard_snapshot["kpis"]["total_cargas"] == 2
 
 
-def test_excel_processor_creates_alerts_and_kpis() -> None:
-    payload = build_excel_bytes()
-    result = process_excel(payload)
+def test_excel_processor_detects_html_xls_and_generates_preview() -> None:
+    payload = build_html_xls_bytes()
 
-    assert len(result.alerts_df) >= 2
-    assert result.dashboard_snapshot["kpis"]["total_sesiones"] == 2
-    assert result.dashboard_snapshot["kpis"]["alertas_criticas"] >= 1
+    preview = preview_excel(payload, "cargas.xls")
+    assert preview.detected_format == "xls_html"
+    assert "Turno" in preview.source_columns
+
+    result = process_excel(payload, "cargas.xls")
+    assert len(result.processed_df) == 1
+    assert result.processed_df.iloc[0]["turno"] == "C"

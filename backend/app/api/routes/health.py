@@ -24,7 +24,7 @@ async def root(request: Request) -> Any:
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BusMetric API</title>
+    <title>BusMetric Fuel API</title>
     <style>
       body { font-family: Arial, sans-serif; background: #0b1220; color: #dbeafe; margin: 0; }
       main { max-width: 760px; margin: 60px auto; padding: 24px; background: #111b2e; border: 1px solid #203352; border-radius: 12px; }
@@ -36,7 +36,7 @@ async def root(request: Request) -> Any:
   </head>
   <body>
     <main>
-      <h1>BusMetric API is running</h1>
+      <h1>BusMetric Fuel API is running</h1>
       <p>This URL serves the backend API.</p>
       <p>Swagger docs: <a href="/docs">/docs</a></p>
       <p>Health check: <a href="/health">/health</a></p>
@@ -48,7 +48,7 @@ async def root(request: Request) -> Any:
         )
 
     return {
-        "service": "BusMetric API",
+        "service": "BusMetric Fuel API",
         "status": "ok",
         "docs": "/docs",
         "health": "/health",

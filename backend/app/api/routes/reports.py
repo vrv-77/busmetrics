@@ -13,7 +13,7 @@ router = APIRouter(tags=["reports"])
 
 @router.get("/reports/export")
 async def export_report(
-    scope: str = Query(default="dashboard", pattern="^(dashboard|stations|chargers|buses|alerts)$"),
+    scope: str = Query(default="dashboard", pattern="^(dashboard|terminals|shifts|dispensers|buses|people|quality|alerts|operations)$"),
     fmt: str = Query(default="excel", pattern="^(csv|excel|pdf)$"),
     filters: AnalyticsFilters = Depends(get_filters),
     _: CurrentUser = Depends(get_current_user),

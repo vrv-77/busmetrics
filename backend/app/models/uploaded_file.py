@@ -14,6 +14,8 @@ class UploadedFile(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     filename: Mapped[str] = mapped_column(String(300), nullable=False)
     storage_path: Mapped[str] = mapped_column(String(600), nullable=False)
+    processed_storage_path: Mapped[str | None] = mapped_column(String(600), nullable=True)
+    detected_format: Mapped[str | None] = mapped_column(String(40), nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="uploaded")
     row_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     user_id: Mapped[str] = mapped_column(String(120), nullable=False)
@@ -21,5 +23,6 @@ class UploadedFile(Base):
     processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    sessions = relationship("ChargingSession", back_populates="file", cascade="all, delete-orphan")
+    raw_loads = relationship("FuelLoadRaw", back_populates="file", cascade="all, delete-orphan")
+    processed_loads = relationship("FuelLoadProcessed", back_populates="file", cascade="all, delete-orphan")
     logs = relationship("ProcessingLog", back_populates="file", cascade="all, delete-orphan")

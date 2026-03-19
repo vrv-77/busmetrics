@@ -1,6 +1,6 @@
 from app.db.base import Base
 from app.db.database import engine
-from app.models import Alert, ChargingSession, ProcessingLog, UploadedFile  # noqa: F401
+from app.models import Alert, FuelLoadProcessed, FuelLoadRaw, ProcessingLog, UploadedFile  # noqa: F401
 
 
 async def init_db() -> None:

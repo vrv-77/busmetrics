@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Download, FileSpreadsheet, FileType2 } from "lucide-react"
 
 import { FiltersPanel } from "@/components/dashboard/filters-panel"
@@ -10,7 +11,6 @@ import { Select } from "@/components/ui/select"
 import { getErrorMessage } from "@/lib/errors"
 import { useExportReport } from "@/lib/hooks"
 import { useFiltersStore } from "@/store/useFiltersStore"
-import { useState } from "react"
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -25,7 +25,15 @@ export default function ReportsPage() {
   const [scope, setScope] = useState("dashboard")
   const filters = useFiltersStore((state) => ({
     file_id: state.file_id,
-    estacion: state.estacion,
+    terminal: state.terminal,
+    turno: state.turno,
+    patente: state.patente,
+    numero_interno: state.numero_interno,
+    conductor: state.conductor,
+    supervisor: state.supervisor,
+    planillero: state.planillero,
+    surtidor: state.surtidor,
+    search: state.search,
     date_from: state.date_from,
     date_to: state.date_to,
   }))
@@ -39,22 +47,28 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Reportes" subtitle="Exportación de métricas operacionales en Excel, CSV y PDF ejecutivo" />
+      <PageHeader title="Reportes" subtitle="Exportacion de metricas operacionales en Excel, CSV y PDF ejecutivo" />
       <FiltersPanel />
 
       <Card>
         <CardHeader>
           <CardTitle>Exportador de Reportes</CardTitle>
-          <CardDescription>Selecciona el alcance del reporte y descarga el formato requerido para gestión o directorio.</CardDescription>
+          <CardDescription>
+            Selecciona el alcance del reporte y descarga el formato requerido para gestion operativa o comite ejecutivo.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="max-w-xs">
             <label className="mb-1 block text-sm text-muted-foreground">Alcance</label>
             <Select value={scope} onChange={(e) => setScope(e.target.value)}>
-              <option value="dashboard">Dashboard Ejecutivo</option>
-              <option value="stations">Estaciones</option>
-              <option value="chargers">Cargadores</option>
+              <option value="dashboard">Dashboard ejecutivo</option>
+              <option value="operations">Operacion detallada</option>
+              <option value="terminals">Terminales</option>
+              <option value="shifts">Turnos</option>
+              <option value="dispensers">Surtidores</option>
               <option value="buses">Buses</option>
+              <option value="people">Personas</option>
+              <option value="quality">Calidad de datos</option>
               <option value="alerts">Alertas</option>
             </Select>
           </div>

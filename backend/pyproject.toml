@@ -1,7 +1,7 @@
 [project]
 name = "busmetric-backend"
-version = "0.1.0"
-description = "Operational charging analytics backend for electric bus depots"
+version = "0.2.0"
+description = "Operational diesel fuel analytics backend for bus depots"
 requires-python = ">=3.11"
 dependencies = []
 

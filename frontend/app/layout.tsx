@@ -13,8 +13,8 @@ const manrope = Manrope({
 })
 
 export const metadata: Metadata = {
-  title: "BusMetric Ops",
-  description: "Análisis operacional de cargas de buses eléctricos",
+  title: "BusMetric FuelOps",
+  description: "Inteligencia operacional para cargas de combustible de buses diesel",
 }
 
 export default function RootLayout({

@@ -6,10 +6,10 @@ import { FiltersPanel } from "@/components/dashboard/filters-panel"
 import { SimpleTable } from "@/components/dashboard/simple-table"
 import { PageHeader } from "@/components/layout/page-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useDispensers } from "@/lib/hooks"
+import { useShifts } from "@/lib/hooks"
 import { useFiltersStore } from "@/store/useFiltersStore"
 
-export default function ChargersPage() {
+export default function ShiftsPage() {
   const filters = useFiltersStore((state) => ({
     file_id: state.file_id,
     terminal: state.terminal,
@@ -25,25 +25,25 @@ export default function ChargersPage() {
     date_to: state.date_to,
   }))
 
-  const dispensersQuery = useDispensers(filters)
+  const shiftsQuery = useShifts(filters)
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Analisis por Surtidor" subtitle="Cargas por surtidor, capturador y participacion operacional" />
+      <PageHeader title="Analisis por Turno" subtitle="Comparacion, horas punta y participacion por turno" />
       <FiltersPanel />
 
       <Card>
         <CardHeader>
-          <CardTitle>Cargas por Surtidor</CardTitle>
+          <CardTitle>Litros por Turno</CardTitle>
         </CardHeader>
         <CardContent className="h-80">
           <ResponsiveContainer>
-            <BarChart data={dispensersQuery.data?.slice(0, 15) ?? []}>
+            <BarChart data={shiftsQuery.data ?? []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#29425f" />
-              <XAxis dataKey="surtidor" stroke="#97afc4" />
+              <XAxis dataKey="turno" stroke="#97afc4" />
               <YAxis stroke="#97afc4" />
               <Tooltip />
-              <Bar dataKey="total_cargas" fill="#3eb2f5" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="litros_totales" fill="#ffc069" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -51,21 +51,20 @@ export default function ChargersPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Detalle de Surtidores</CardTitle>
+          <CardTitle>Detalle por Turno</CardTitle>
         </CardHeader>
         <CardContent>
           <SimpleTable
             columns={[
-              { key: "surtidor", label: "Surtidor" },
-              { key: "capturador", label: "Capturador" },
-              { key: "terminal", label: "Terminal" },
               { key: "turno", label: "Turno" },
               { key: "total_cargas", label: "Cargas" },
               { key: "litros_totales", label: "Litros" },
+              { key: "promedio_litros", label: "Promedio litros" },
               { key: "participacion_pct", label: "% participacion" },
-              { key: "sin_actividad_reciente", label: "Sin actividad reciente" },
+              { key: "horas_punta", label: "Hora punta" },
+              { key: "horas_valle", label: "Hora valle" },
             ]}
-            rows={dispensersQuery.data ?? []}
+            rows={shiftsQuery.data ?? []}
           />
         </CardContent>
       </Card>

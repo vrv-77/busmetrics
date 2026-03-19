@@ -6,10 +6,15 @@ import {
   exportReport,
   getAlerts,
   getBuses,
-  getChargers,
   getDashboard,
+  getDispensers,
   getFiles,
-  getStations,
+  getOperations,
+  getPeople,
+  getQuality,
+  getShifts,
+  getTerminals,
+  previewFile,
   processFile,
   uploadExcel,
   type QueryFilters,
@@ -22,17 +27,24 @@ export function useDashboard(filters?: QueryFilters) {
   })
 }
 
-export function useStations(filters?: QueryFilters) {
+export function useTerminals(filters?: QueryFilters) {
   return useQuery({
-    queryKey: ["stations", filters],
-    queryFn: () => getStations(filters),
+    queryKey: ["terminals", filters],
+    queryFn: () => getTerminals(filters),
   })
 }
 
-export function useChargers(filters?: QueryFilters) {
+export function useShifts(filters?: QueryFilters) {
   return useQuery({
-    queryKey: ["chargers", filters],
-    queryFn: () => getChargers(filters),
+    queryKey: ["shifts", filters],
+    queryFn: () => getShifts(filters),
+  })
+}
+
+export function useDispensers(filters?: QueryFilters) {
+  return useQuery({
+    queryKey: ["dispensers", filters],
+    queryFn: () => getDispensers(filters),
   })
 }
 
@@ -40,6 +52,30 @@ export function useBuses(filters?: QueryFilters) {
   return useQuery({
     queryKey: ["buses", filters],
     queryFn: () => getBuses(filters),
+  })
+}
+
+export function usePeople(filters?: QueryFilters) {
+  return useQuery({
+    queryKey: ["people", filters],
+    queryFn: () => getPeople(filters),
+  })
+}
+
+export function useQuality(filters?: QueryFilters) {
+  return useQuery({
+    queryKey: ["quality", filters],
+    queryFn: () => getQuality(filters),
+  })
+}
+
+export function useOperations(
+  filters?: QueryFilters,
+  options?: { page?: number; page_size?: number; sort_by?: string; sort_dir?: "asc" | "desc" }
+) {
+  return useQuery({
+    queryKey: ["operations", filters, options],
+    queryFn: () => getOperations(filters, options),
   })
 }
 
@@ -68,17 +104,28 @@ export function useUploadExcel() {
   })
 }
 
+export function usePreviewFile() {
+  return useMutation({
+    mutationFn: (fileId: string) => previewFile(fileId),
+  })
+}
+
 export function useProcessFile() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (fileId: string) => processFile(fileId),
+    mutationFn: ({ fileId, columnMapping }: { fileId: string; columnMapping?: Record<string, string> }) =>
+      processFile(fileId, columnMapping),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] })
       queryClient.invalidateQueries({ queryKey: ["dashboard"] })
-      queryClient.invalidateQueries({ queryKey: ["stations"] })
-      queryClient.invalidateQueries({ queryKey: ["chargers"] })
+      queryClient.invalidateQueries({ queryKey: ["terminals"] })
+      queryClient.invalidateQueries({ queryKey: ["shifts"] })
+      queryClient.invalidateQueries({ queryKey: ["dispensers"] })
       queryClient.invalidateQueries({ queryKey: ["buses"] })
+      queryClient.invalidateQueries({ queryKey: ["people"] })
+      queryClient.invalidateQueries({ queryKey: ["quality"] })
+      queryClient.invalidateQueries({ queryKey: ["operations"] })
       queryClient.invalidateQueries({ queryKey: ["alerts"] })
     },
   })

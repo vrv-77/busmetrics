@@ -5,13 +5,19 @@ from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.config import get_settings
 from app.db.database import get_db_session
 from app.models.processing_log import ProcessingLog
 from app.schemas.auth import CurrentUser
-from app.schemas.files import ProcessResponse, UploadResponse, UploadedFileResponse
-from app.services.file_service import create_uploaded_file, process_uploaded_file
+from app.schemas.files import (
+    FilePreviewResponse,
+    ProcessRequest,
+    ProcessResponse,
+    UploadResponse,
+    UploadedFileResponse,
+)
 from app.services.analytics_service import get_uploaded_files
-from app.core.config import get_settings
+from app.services.file_service import create_uploaded_file, preview_uploaded_file, process_uploaded_file
 
 settings = get_settings()
 router = APIRouter(tags=["files"])
@@ -39,20 +45,37 @@ async def upload_file(
         filename=file.filename,
         payload=payload,
         user_id=user.id,
-        content_type=file.content_type or "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        content_type=file.content_type or "application/vnd.ms-excel",
     )
 
     return UploadResponse(file_id=uploaded.id, filename=uploaded.filename, status=uploaded.status)
 
 
+@router.get("/files/{file_id}/preview", response_model=FilePreviewResponse)
+async def preview_file(
+    file_id: UUID,
+    _: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db_session),
+) -> FilePreviewResponse:
+    try:
+        data = await preview_uploaded_file(db, file_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return FilePreviewResponse(**data)
+
+
 @router.post("/process-file/{file_id}", response_model=ProcessResponse)
 async def process_file(
     file_id: UUID,
+    payload: ProcessRequest = ProcessRequest(),
     _: CurrentUser = Depends(get_current_user),
     db: AsyncSession = Depends(get_db_session),
 ) -> ProcessResponse:
     try:
-        result = await process_uploaded_file(db, file_id)
+        result = await process_uploaded_file(db, file_id, column_mapping=payload.column_mapping)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
